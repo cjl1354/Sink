@@ -11,6 +11,7 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "preview_urls": false,
   "keep_vars": true,
   "upload_source_maps": true,
   "observability": {

@@ -1,8 +1,8 @@
 import { destr } from 'destr'
 
-export interface AiChatResponse {
-  response?: string
-  choices?: { message?: { content?: string } }[]
+export type AiChatResponse = string | {
+  response?: unknown
+  choices?: { message?: { content?: unknown } }[]
 }
 
 function stripCodeFence(content: string): string {
@@ -23,8 +23,14 @@ function stripCodeFence(content: string): string {
 }
 
 export function parseAiResponse(response: AiChatResponse): Record<string, unknown> {
-  const content = response.response ?? response.choices?.[0]?.message?.content ?? ''
-  if (!content.trim())
+  const content = typeof response === 'string'
+    ? response
+    : response.response ?? response.choices?.[0]?.message?.content
+
+  if (typeof content === 'object' && content !== null && !Array.isArray(content))
+    return content as Record<string, unknown>
+
+  if (typeof content !== 'string' || !content.trim())
     return {}
 
   const parsed = destr(stripCodeFence(content))
